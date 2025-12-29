@@ -5,6 +5,10 @@ A simple web interface for generating images using Stable Diffusion
 
 import os
 import torch
+import huggingface_hub as hf
+if not hasattr(hf, "cached_download"):
+    from huggingface_hub import hf_hub_download
+    hf.cached_download = hf_hub_download
 from diffusers import StableDiffusionPipeline
 import gradio as gr
 from PIL import Image
