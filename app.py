@@ -69,8 +69,20 @@ class StableDiffusionApp:
             if seed is not None and seed >= 0:
                 generator = torch.Generator(device=self.device).manual_seed(seed)
             
-            # Generate image
-            with torch.autocast(self.device):
+            # Generate image with automatic mixed precision for CUDA
+            if self.device == "cuda":
+                with torch.autocast(self.device):
+                    result = self.pipe(
+                        prompt=prompt,
+                        negative_prompt=negative_prompt if negative_prompt else None,
+                        num_inference_steps=num_inference_steps,
+                        guidance_scale=guidance_scale,
+                        width=width,
+                        height=height,
+                        generator=generator
+                    )
+            else:
+                # CPU inference without autocast
                 result = self.pipe(
                     prompt=prompt,
                     negative_prompt=negative_prompt if negative_prompt else None,
